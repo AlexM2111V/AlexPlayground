@@ -21,7 +21,7 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        var seen = new HashSet<string>();
+        var seen = new HashSet<int>();
         var pairs = new List<string>();
 
         foreach (var word in words)
@@ -30,13 +30,15 @@ public static class SetsAndMaps
             if (word[0] == word[1])
                 continue;
 
-            var reversed = $"{word[1]}{word[0]}";
+            // Encode each 2-letter word as a number so no new strings are created per word
+            int key = word[0] << 16 | word[1];
+            int reversedKey = word[1] << 16 | word[0];
 
             // If the reverse was already seen, we found a symmetric pair
-            if (seen.Contains(reversed))
-                pairs.Add($"{word} & {reversed}");
+            if (seen.Contains(reversedKey))
+                pairs.Add($"{word} & {word[1]}{word[0]}");
             else
-                seen.Add(word);
+                seen.Add(key);
         }
 
         return pairs.ToArray();
